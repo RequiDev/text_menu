@@ -5,14 +5,8 @@
 class D3DMenuSubFolderItem : public ID3DMenuItem
 {
 public:
-	D3DMenuSubFolderItem(const std::string& _name, const bool is_sub_item = false)
-	{
-		subfolder = true;
-
-		name = _name;
-		sub_item = is_sub_item;
-		selected = false;
-	}
+	D3DMenuSubFolderItem(const std::string& _name, const bool is_sub_item = false) : 
+		ID3DMenuItem(_name, is_sub_item, true) {}
 
 	std::string get_value_text() const override
 	{

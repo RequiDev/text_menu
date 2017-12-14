@@ -10,23 +10,23 @@
 void text_menu::setup()
 {
 	auto esp = std::make_shared<D3DMenuSubFolderItem>("ESP");
-	esp->add_sub_item(std::make_shared<D3DMenuBoolItem>("Draw Players", &settings::esp::player, true));
-	esp->add_sub_item(std::make_shared<D3DMenuBoolItem>("Draw Skeletons", &settings::esp::skeleton, true));
-	esp->add_sub_item(std::make_shared<D3DMenuBoolItem>("Draw Boxes", &settings::esp::boxes, true));
-	esp->add_sub_item(std::make_shared<D3DMenuIntItem>("Max Distance", &settings::esp::distance, 50, 1000, 50, true));
-	esp->add_sub_item(std::make_shared<D3DMenuBoolItem>("Draw Loot", &settings::esp::loot, true));
-	esp->add_sub_item(std::make_shared<D3DMenuBoolItem>("Draw Vehicle", &settings::esp::vehicle, true));
+	esp->add_sub_item(std::make_shared<D3DMenuBoolItem>("Draw Players", settings::esp::player, true));
+	esp->add_sub_item(std::make_shared<D3DMenuBoolItem>("Draw Skeletons", settings::esp::skeleton, true));
+	esp->add_sub_item(std::make_shared<D3DMenuBoolItem>("Draw Boxes", settings::esp::boxes, true));
+	esp->add_sub_item(std::make_shared<D3DMenuIntItem>("Max Distance", settings::esp::distance, 50, 1000, 50, true));
+	esp->add_sub_item(std::make_shared<D3DMenuBoolItem>("Draw Loot", settings::esp::loot, true));
+	esp->add_sub_item(std::make_shared<D3DMenuBoolItem>("Draw Vehicle", settings::esp::vehicle, true));
 
 	auto loot = std::make_shared<D3DMenuSubFolderItem>("Loot Mode", true);
-	loot->add_sub_item(std::make_shared<D3DMenuFlagItem>("All", &settings::esp::loot_mode, LootMode::ALL, true));
-	loot->add_sub_item(std::make_shared<D3DMenuFlagItem>("Weapon", &settings::esp::loot_mode, LootMode::WEAPONS, true));
-	loot->add_sub_item(std::make_shared<D3DMenuFlagItem>("Ammo", &settings::esp::loot_mode, LootMode::AMMO, true));
-	loot->add_sub_item(std::make_shared<D3DMenuFlagItem>("Medical", &settings::esp::loot_mode, LootMode::MEDIC, true));
-	loot->add_sub_item(std::make_shared<D3DMenuFlagItem>("Equipment", &settings::esp::loot_mode, LootMode::EQUIPMENT, true));
-	loot->add_sub_item(std::make_shared<D3DMenuFlagItem>("Attachment", &settings::esp::loot_mode, LootMode::ATTACHMENTS, true));
+	loot->add_sub_item(std::make_shared<D3DMenuFlagItem>("All", settings::esp::loot_mode, LootMode::ALL, true));
+	loot->add_sub_item(std::make_shared<D3DMenuFlagItem>("Weapon", settings::esp::loot_mode, LootMode::WEAPONS, true));
+	loot->add_sub_item(std::make_shared<D3DMenuFlagItem>("Ammo", settings::esp::loot_mode, LootMode::AMMO, true));
+	loot->add_sub_item(std::make_shared<D3DMenuFlagItem>("Medical", settings::esp::loot_mode, LootMode::MEDIC, true));
+	loot->add_sub_item(std::make_shared<D3DMenuFlagItem>("Equipment", settings::esp::loot_mode, LootMode::EQUIPMENT, true));
+	loot->add_sub_item(std::make_shared<D3DMenuFlagItem>("Attachment", settings::esp::loot_mode, LootMode::ATTACHMENTS, true));
 	esp->add_sub_item(loot);
 
-	auto player_speed = std::make_shared<D3DMenuFloatItem>("Player Speed", &settings::player_speed, 0.1f, 3.0f, 0.1f);
+	auto player_speed = std::make_shared<D3DMenuFloatItem>("Player Speed", settings::player_speed, 0.1f, 3.0f, 0.1f);
 
 	menu_items.emplace_back(esp);
 	menu_items.emplace_back(player_speed);
@@ -94,24 +94,24 @@ std::vector<std::shared_ptr<ID3DMenuItem>> text_menu::get_all_visible_items()
 {
 	std::vector<std::shared_ptr<ID3DMenuItem>> ret;
 
-	std::function<void(const std::vector<std::shared_ptr<ID3DMenuItem>>& list, std::vector<std::shared_ptr<ID3DMenuItem>>& retx)> add_folter_items;
-	add_folter_items = [&](const std::vector<std::shared_ptr<ID3DMenuItem>>& list, std::vector<std::shared_ptr<ID3DMenuItem>>& retx)
+	std::function<void(const std::vector<std::shared_ptr<ID3DMenuItem>>& list)> add_folder_items;
+	add_folder_items = [&](const std::vector<std::shared_ptr<ID3DMenuItem>>& list)
 	{
 		for (const auto& item : list)
 		{
-			retx.emplace_back(item);
+			ret.emplace_back(item);
 
 			if (item->is_subfolder())
 			{
 				auto folder = std::static_pointer_cast<D3DMenuSubFolderItem>(item);
 
 				if (folder->is_opened())
-					add_folter_items(folder->get_sub_items(), retx);
+					add_folder_items(folder->get_sub_items());
 			}
 		}
 	};
 
-	add_folter_items(menu_items, ret);
+	add_folder_items(menu_items);
 
 	return ret;
 }
