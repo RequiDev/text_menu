@@ -120,19 +120,7 @@ std::shared_ptr<ID3DMenuItem> text_menu::get_current_selected()
 {
 	auto items = get_all_visible_items();
 	for (const auto& item : items)
-	{
 		if (item->is_selected()) return item;
-		if (item->is_subfolder())
-		{
-			const auto folder = std::static_pointer_cast<D3DMenuSubFolderItem>(item);
-
-			for (const auto& sub_item : folder->get_sub_items())
-			{
-				if (sub_item->is_selected())
-					return sub_item;
-			}
-		}
-	}
 	return nullptr;
 }
 
