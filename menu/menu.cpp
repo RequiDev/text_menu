@@ -1,13 +1,14 @@
 #include "menu.hpp"
 #include "settings.hpp"
 #include "../overlay/overlay.hpp"
+#include "items/ID3DMenuItem.hpp"
 #include "items/D3DMenuBoolItem.hpp"
 #include "items/D3DMenuSubFolderItem.hpp"
 #include "items/D3DMenuFlagItem.hpp"
 #include "items/D3DMenuIntItem.hpp"
 #include "items/D3DMenuFloatItem.hpp"
 
-void text_menu::setup()
+text_menu::text_menu()
 {
 	auto esp = std::make_shared<D3DMenuSubFolderItem>("ESP");
 	esp->add_sub_item(std::make_shared<D3DMenuBoolItem>("Draw Players", settings::esp::player, true));
@@ -24,6 +25,7 @@ void text_menu::setup()
 	loot->add_sub_item(std::make_shared<D3DMenuFlagItem>("Medical", settings::esp::loot_mode, LootMode::MEDIC, true));
 	loot->add_sub_item(std::make_shared<D3DMenuFlagItem>("Equipment", settings::esp::loot_mode, LootMode::EQUIPMENT, true));
 	loot->add_sub_item(std::make_shared<D3DMenuFlagItem>("Attachment", settings::esp::loot_mode, LootMode::ATTACHMENTS, true));
+
 	esp->add_sub_item(loot);
 
 	auto player_speed = std::make_shared<D3DMenuFloatItem>("Player Speed", settings::player_speed, 0.1f, 3.0f, 0.1f);
@@ -32,7 +34,7 @@ void text_menu::setup()
 	menu_items.emplace_back(player_speed);
 
 	menu_items.at(0)->is_selected() = true;
-	
+
 	font_height = overlay->get_string_height("MENU_STRING_TO_DETERMINE_HEIGHT");
 	overlay->add_callback(std::bind(&text_menu::render, this));
 }
@@ -81,11 +83,11 @@ void text_menu::draw_menu_item(std::shared_ptr<ID3DMenuItem> item, const float p
 
 	if (item->is_subfolder() && std::static_pointer_cast<D3DMenuSubFolderItem>(item)->is_opened())
 	{
-		static auto nigga_length = overlay->get_string_width("[ - ] ");
+		static auto length = overlay->get_string_width("[ - ] ");
 		
 		for(const auto& sub : std::static_pointer_cast<D3DMenuSubFolderItem>(item)->get_sub_items())
 		{
-			draw_menu_item(sub, padding + nigga_length + 6.f);
+			draw_menu_item(sub, padding + length + 6.f);
 		}
 	}
 }
@@ -120,7 +122,10 @@ std::shared_ptr<ID3DMenuItem> text_menu::get_current_selected()
 {
 	auto items = get_all_visible_items();
 	for (const auto& item : items)
+	{
 		if (item->is_selected()) return item;
+	}
+
 	return nullptr;
 }
 

@@ -1,12 +1,13 @@
 #pragma once
 #include <vector>
 #include <memory>
-#include "items/ID3DMenuItem.hpp"
+
+class ID3DMenuItem;
 
 class text_menu
 {
 public:
-	void setup();
+	text_menu();
 private:
 	void render();
 	void draw_menu_item(std::shared_ptr<ID3DMenuItem> item, float padding = 0.f);
